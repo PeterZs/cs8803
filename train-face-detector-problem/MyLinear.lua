@@ -51,7 +51,8 @@ function MyLinear:updateOutput(input)
       self.output:resize(self.bias:size(1))
       -- TODO ---------------------------------------------
       -- self.output
-
+	  self.output:copy(self.bias)
+	  self.output:addmv(self.weight, input)
 
       -----------------------------------------------------
    elseif input:dim() == 2 then
@@ -65,6 +66,8 @@ function MyLinear:updateOutput(input)
 
       -- TODO ---------------------------------------------
       -- self.output
+	  self.output:addmm(0, self.output, 1, input, self.weight:t())
+	  self.output:addr(torch.ones(nframe), self.bias)
       
       -----------------------------------------------------
 
@@ -89,12 +92,14 @@ function MyLinear:updateGradInput(input, gradOutput)
       if input:dim() == 1 then
          -- TODO ---------------------------------------------
          -- self.gradInput
+		 self.gradInput:addmv(self.weight:t(), gradOutput)
 
          -----------------------------------------------------
 
       elseif input:dim() == 2 then
          -- TODO ---------------------------------------------
          -- self.gradInput
+		 self.gradInput:addmm(gradOutput, self.weight)
 
          -----------------------------------------------------
       end
@@ -110,12 +115,17 @@ function MyLinear:accGradParameters(input, gradOutput, scale)
       -- TODO ---------------------------------------------
       -- self.gradWeight
       -- self.gradBias
+	  self.gradWeight:addr(scale, gradOutput, input)
+	  self.gradBias:add(scale, gradOutput)
 
       -----------------------------------------------------
    elseif input:dim() == 2 then
       -- TODO ---------------------------------------------
       -- self.gradWeight
       -- self.gradBias
+      local nframe = input:size(1)
+	  self.gradWeight:addmm(scale, gradOutput:t(), input)
+	  self.gradBias:addmv(scale, gradOutput:t(), torch.ones(nframe))
 
       -----------------------------------------------------
    end

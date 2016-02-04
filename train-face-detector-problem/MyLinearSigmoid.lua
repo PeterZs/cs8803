@@ -120,7 +120,7 @@ function MyLinearSigmoid:updateGradInput(input, gradOutput)
 
       elseif input:dim() == 2 then
          -- for activation module
-         - TODO ---------------------------------------------
+         -- TODO ---------------------------------------------
          -- self.gradA1
 
 

@@ -11,6 +11,9 @@ require 'nn'      -- provides all sorts of trainable modules/layers
 
 -- TODO ---------------------------------------------
 -- require 'put your custom layer'
+require 'MyLinear'
+require 'MyLinearSigmoid'
+require 'MyLinearSigmoidLinear'
 
 
 ----------------------------------------------------
@@ -58,6 +61,8 @@ if opt.model == 'MyLinear' then
    -- TODO --------------------------------------------
    -- Create your linear model
    -- classifier:add(xxx)
+   classifier:add(nn.Reshape(opt.batchSize,width*height,false))
+   classifier:add(nn.MyLinear(width*height,noutputs))
 
 
    ----------------------------------------------------
