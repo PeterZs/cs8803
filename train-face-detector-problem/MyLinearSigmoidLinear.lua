@@ -70,7 +70,8 @@ function MyLinearSigmoidLinear:updateOutput(input)
    if input:dim() == 1 then
       self.z1:resize(self.bias1:size(1))
       -- TODO ---------------------------------------------
-      -- self.z1
+	  self.z1:copy(self.bias1)
+	  self.z1:addmv(self.weight1, input)
 
 
       -----------------------------------------------------
@@ -82,12 +83,8 @@ function MyLinearSigmoidLinear:updateOutput(input)
          self.z1:zero()
       end
       -- TODO ---------------------------------------------
-      -- self.z1
-
-
-
-
-
+	  self.z1:addmm(0, self.z1, 1, input, self.weight1:t())
+	  self.z1:addr(torch.ones(nframe), self.bias1)
 
       -----------------------------------------------------
    else
@@ -95,14 +92,15 @@ function MyLinearSigmoidLinear:updateOutput(input)
    end
 
    -- calcualting a1 i.e the output of the sigmoid(z1)
-   self.a1 = sigmoid(self.z1)
+   -- self.a1 = sigmoid(self.z1)
+	self.a1 = torch.pow(torch.add(torch.exp(-self.z1),1),-1)
 
    -- Calcualting z2 i.e the output of the second Linear part of the layer
    if self.a1:dim() == 1 then
       -- TODO ---------------------------------------------
-      -- self.z2
-
-
+      self.z2:resize(self.bias2:size(1))
+	  self.z2:copy(self.bias2)
+	  self.z2:addmv(self.weight2, self.a1)
 
       -----------------------------------------------------
    elseif self.a1:dim() == 2 then
@@ -113,13 +111,8 @@ function MyLinearSigmoidLinear:updateOutput(input)
          self.z2:zero()
       end
       -- TODO ---------------------------------------------
-      -- self.z2
-
-
-
-
-
-
+	  self.z2:addmm(0, self.z2, 1, self.a1, self.weight2:t())
+	  self.z2:addr(torch.ones(nframe), self.bias2)
       -----------------------------------------------------
    else
       error('input must be vector or matrix')
@@ -148,47 +141,37 @@ function MyLinearSigmoidLinear:updateGradInput(input, gradOutput)
          -- for the second linear module
          -- TODO ---------------------------------------------
          -- self.gradA2
-
-
+		 self.gradA2:resize(self.a1:size())
+		 self.gradA2:addmv(self.weight2:t(), gradOutput)
          -----------------------------------------------------
 
          -- for the first activation module
          -- TODO ---------------------------------------------
-         -- self.gradA1
-
-
-
-
-
+		 self.gradA1 = torch.cmul(self.gradA2,-torch.cmul(self.a1,torch.add(self.a1,-1)))
          -----------------------------------------------------
 
          -- for the first linear module
          -- TODO ---------------------------------------------
-         -- self.gradInput
+		 self.gradInput:addmv(self.weight1:t(), self.gradA1)
 
          -----------------------------------------------------
 
       elseif input:dim() == 2 then
          -- for the second linear module
          -- TODO ---------------------------------------------
-         -- self.gradA2
-
+		 self.gradA2:resize(self.a1:size())
+		 self.gradA2:addmm(gradOutput, self.weight2)
 
          -----------------------------------------------------
 
          -- for the first activation module
          -- TODO ---------------------------------------------
-         -- self.gradA1
-
-
-
-
-
+		 self.gradA1 = torch.cmul(self.gradA2,-torch.cmul(self.a1,torch.add(self.a1,-1)))
          -----------------------------------------------------
 
          -- for the first linear module
          -- TODO ---------------------------------------------
-         -- self.gradInput
+		 self.gradInput:addmm(self.gradA1, self.weight1)
 
          -----------------------------------------------------
       end
@@ -201,25 +184,23 @@ function MyLinearSigmoidLinear:parameters()
    return {self.weight1, self.weight2, self.bias1, self.bias2}, {self.gradWeight1, self.gradWeight2, self.gradBias1, self.gradBias2}
 end
 
-
 function MyLinearSigmoidLinear:accGradParameters(input, gradOutput, scale)
    scale = scale or 1
    if input:dim() == 1 then
       -- TODO ---------------------------------------------
-      -- self.gradWeight2
-      -- self.gradBias2
-      -- self.gradWeight1
-      -- self.gradBias1
+	  self.gradWeight2:addr(scale, gradOutput, self.a1)
+	  self.gradBias2:add(scale, gradOutput)
+	  self.gradWeight1:addr(scale, self.gradA1, input)
+	  self.gradBias1:add(scale, self.gradA1)
 
 
       -----------------------------------------------------
    elseif input:dim() == 2 then
       -- TODO ---------------------------------------------
-      -- self.gradWeight2
-      -- self.gradBias2
-      -- self.gradWeight1
-      -- self.gradBias1
-
+	  self.gradWeight2:addmm(scale, gradOutput:t(), self.a1)
+	  self.gradBias2:addmv(scale, gradOutput:t(), torch.ones(self.z2:size(1)))
+	  self.gradWeight1:addmm(scale, self.gradA1:t(), input)
+	  self.gradBias1:addmv(scale, self.gradA1:t(), torch.ones(self.a1:size(1)))
 
       -----------------------------------------------------
    end
@@ -238,8 +219,7 @@ end
 function sigmoid(input)
 
    -- TODO ---------------------------------------------
-   -- return ?
-
+	return torch.pow(torch.add(torch.exp(-input),1),-1)
 
    -----------------------------------------------------
 end

@@ -50,7 +50,7 @@ function MyLinear:updateOutput(input)
 
       self.output:resize(self.bias:size(1))
       -- TODO ---------------------------------------------
-      -- self.output
+	  -- self.output = self.weight*input + self.bias
 	  self.output:copy(self.bias)
 	  self.output:addmv(self.weight, input)
 
@@ -65,7 +65,7 @@ function MyLinear:updateOutput(input)
       end
 
       -- TODO ---------------------------------------------
-      -- self.output
+	  -- self.output = input*self.weight:t() + torch.ger(torch.ones(nframe),self.bias)
 	  self.output:addmm(0, self.output, 1, input, self.weight:t())
 	  self.output:addr(torch.ones(nframe), self.bias)
       
@@ -74,7 +74,6 @@ function MyLinear:updateOutput(input)
    else
       error('input must be vector or matrix')
    end
-
    return self.output
 end
 
@@ -91,14 +90,14 @@ function MyLinear:updateGradInput(input, gradOutput)
       end
       if input:dim() == 1 then
          -- TODO ---------------------------------------------
-         -- self.gradInput
+		 -- self.gradInput = self.weight:t() * gradOutput
 		 self.gradInput:addmv(self.weight:t(), gradOutput)
 
          -----------------------------------------------------
 
       elseif input:dim() == 2 then
          -- TODO ---------------------------------------------
-         -- self.gradInput
+		 -- self.gradInput = gradOutput * self.weight
 		 self.gradInput:addmm(gradOutput, self.weight)
 
          -----------------------------------------------------
@@ -113,17 +112,17 @@ function MyLinear:accGradParameters(input, gradOutput, scale)
    scale = scale or 1
    if input:dim() == 1 then
       -- TODO ---------------------------------------------
-      -- self.gradWeight
-      -- self.gradBias
+	  -- self.gradWeight = self.gradWeight + gradOutput * input * scale
+	  -- self.gradBias = self.gradBias + gradOutput * scale
 	  self.gradWeight:addr(scale, gradOutput, input)
 	  self.gradBias:add(scale, gradOutput)
 
       -----------------------------------------------------
    elseif input:dim() == 2 then
       -- TODO ---------------------------------------------
-      -- self.gradWeight
-      -- self.gradBias
       local nframe = input:size(1)
+	  -- self.gradWeight = self.gradWeight + gradOutput:t() * input * scale
+	  -- self.gradBias = self.gradBias + gradOutput:t() * torch.ones(nframe) * scale
 	  self.gradWeight:addmm(scale, gradOutput:t(), input)
 	  self.gradBias:addmv(scale, gradOutput:t(), torch.ones(nframe))
 

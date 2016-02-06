@@ -5,9 +5,9 @@ require 'nn'
 
 -- TODO ---------------------------------------------
 -- require 'put your custom layer'
-
-
-
+require 'MyLinear'
+require 'MyLinearSigmoid'
+require 'MyLinearSigmoidLinear'
 
 ----------------------------------------------------
 
@@ -37,11 +37,13 @@ function create_model(opt)
   elseif opt.model == 'MyLinearSigmoid' then
     -- TODO ---------------------------------------------
     -- model:add
+    model:add(nn.MyLinearSigmoid(n_inputs, n_classes))
 
     ----------------------------------------------------
   elseif opt.model == 'MyLinearSigmoidLinear' then
     -- TODO ---------------------------------------------
     -- model:add
+    model:add(nn.MyLinearSigmoidLinear(n_inputs, embedding_dim, n_classes))
 
     ----------------------------------------------------
   end
@@ -63,7 +65,7 @@ end
 local function checkgrad(f, g, x, eps)
   -- compute true gradient
   local grad = g(x)
-
+	local two_sided = true
   -- compute numeric approximations to gradient
   local eps = eps or 1e-7
   local grad_est = torch.DoubleTensor(grad:size())
@@ -71,9 +73,18 @@ local function checkgrad(f, g, x, eps)
     ------------------------------------------------------------------------------
     -- TODO: do something with x[i] and evaluate f twice, and put your estimate of df/dx_i into grad_est[i]
     -- grad_est
-
-
-
+	x[i] = x[i] + eps
+	local f1 = f(x)
+	if two_sided then
+		x[i] = x[i] - 2 * eps
+		local f2 = f(x)
+		x[i] = x[i] + eps
+		grad_est[i] = (f1 - f2) / (2 * eps)
+	else
+		x[i] = x[i] - eps
+		local f2 = f(x)
+		grad_est[i] = (f1 - f2) / (eps)
+	end
 
     ------------------------------------------------------------------------------
   end
@@ -119,6 +130,7 @@ local g = function(x)
   return gradParameters
 end
 
-local diff = checkgrad(f, g, parameters)
+local eps = 1e-7
+local diff = checkgrad(f, g, parameters, eps)
 print(diff, eps)
 

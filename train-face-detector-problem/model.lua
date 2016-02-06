@@ -61,9 +61,8 @@ if opt.model == 'MyLinear' then
    -- TODO --------------------------------------------
    -- Create your linear model
    -- classifier:add(xxx)
-   classifier:add(nn.Reshape(opt.batchSize,width*height,false))
-   classifier:add(nn.MyLinear(width*height,noutputs))
-
+   classifier:add(nn.Reshape(opt.batchSize,width*height*nfeats,false))
+   classifier:add(nn.MyLinear(width*height*nfeats,noutputs))
 
    ----------------------------------------------------
 
@@ -78,11 +77,13 @@ elseif opt.model == 'MyLinearSigmoid' then
    -- TODO --------------------------------------------
    -- Create your linear + sigmoid model
    -- classifier:add(xxx)
-
-
+   classifier:add(nn.Reshape(opt.batchSize,width*height*nfeats,false))
+   classifier:add(nn.MyLinearSigmoid(width*height*nfeats,noutputs))
 
    ----------------------------------------------------
 
+   -- stage 2 : log probabilities
+   classifier:add(nn.LogSoftMax())
    model:add(classifier)
 
 elseif opt.model == 'MyLinearSigmoidLinear' then
@@ -91,13 +92,13 @@ elseif opt.model == 'MyLinearSigmoidLinear' then
    -- TODO --------------------------------------------
    -- Create your linear + sigmoid + linear model
    -- classifier:add(xxx)
-
-
+   classifier:add(nn.Reshape(opt.batchSize,width*height*nfeats,false))
+   classifier:add(nn.MyLinearSigmoidLinear(width*height*nfeats,width,noutputs))
 
    ----------------------------------------------------
 
    -- stage 2 : log probabilities
-   classifier:add(nn.LogSoftMax())
+   -- classifier:add(nn.LogSoftMax())
 
    model:add(classifier)
 end
