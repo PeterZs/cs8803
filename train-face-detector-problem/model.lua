@@ -98,7 +98,7 @@ elseif opt.model == 'MyLinearSigmoidLinear' then
    ----------------------------------------------------
 
    -- stage 2 : log probabilities
-   -- classifier:add(nn.LogSoftMax())
+   classifier:add(nn.LogSoftMax())
 
    model:add(classifier)
 end

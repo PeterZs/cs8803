@@ -79,8 +79,7 @@ function MyLinearSigmoid:updateOutput(input)
    end
 
    -- calcualting a1 i.e the output of the sigmoid(z1)
-   -- self.a1 = sigmoid(self.z1)
-	self.a1 = torch.pow(torch.add(torch.exp(-self.z1),1),-1)
+   self.a1 = my_sigmoid(self.z1)
 
    --
    self.output:resizeAs(self.a1):copy(self.a1)
@@ -105,7 +104,7 @@ function MyLinearSigmoid:updateGradInput(input, gradOutput)
          -- for activation module
          -- TODO ---------------------------------------------
          -- self.gradA1
-		self.gradA1 = torch.cmul(gradOutput,-torch.cmul(self.a1,torch.add(self.a1,-1)))
+		self.gradA1:cmul(gradOutput,-torch.cmul(self.a1,torch.add(self.a1,-1)))
          -----------------------------------------------------
 
          -- for linear 1 module
@@ -119,7 +118,7 @@ function MyLinearSigmoid:updateGradInput(input, gradOutput)
          -- for activation module
          -- TODO ---------------------------------------------
          -- self.gradA1
-		self.gradA1 = torch.cmul(gradOutput,-torch.cmul(self.a1,torch.add(self.a1,-1)))
+		self.gradA1:cmul(gradOutput,-torch.cmul(self.a1,torch.add(self.a1,-1)))
          -----------------------------------------------------
 
          -- for linear 1 module
@@ -168,7 +167,7 @@ function MyLinearSigmoid:__tostring__()
 end
 
 -- return the output of sigmoid input
-function sigmoid(input)
+function my_sigmoid(input)
 
    -- TODO ---------------------------------------------
 	return torch.pow(torch.add(torch.exp(-input),1),-1)
