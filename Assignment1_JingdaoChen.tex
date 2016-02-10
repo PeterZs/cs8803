@@ -4,6 +4,7 @@
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{graphicx}
+\newcommand{\imsize}{0.5\linewidth}
 
 \begin{document}
 
@@ -17,7 +18,11 @@
 
 The plot of the estimated linear function is shown below:
 
+\includegraphics[width=\imsize]{train-face-detector-problem/plot}]
+
 The plot of cost function vs. no. of iterations is shown below:
+
+\includegraphics[width=\imsize]{train-face-detector-problem/cost_function}]
 
 \section{Problem 2}
 
@@ -33,7 +38,13 @@ Let the input be $x_0$ and the output be $x_1$. The linear layer is calculated a
 \end{split}
 \end{equation}
 
-The plot of accuracy vs. no. of epoch is shown below:
+The plot of training accuracy vs. no. of epoch for is shown below:
+
+\includegraphics[width=\imsize]{train-face-detector-problem/results/MyLinear_train}]
+
+The plot of testing accuracy vs. no. of epoch for is shown below:
+
+\includegraphics[width=\imsize]{train-face-detector-problem/results/MyLinear_test}]
 
 \subsection{Linear-Sigmoid Layer}
 
@@ -50,7 +61,13 @@ The sigmoid layer is calculated as $x_2=\sigma(x_1)$.
 \end{split}
 \end{equation}
 
-The plot of accuracy vs. no. of epoch is shown below:
+The plot of training accuracy vs. no. of epoch for is shown below:
+
+\includegraphics[width=\imsize]{train-face-detector-problem/results/MyLinearSigmoid_train}]
+
+The plot of testing accuracy vs. no. of epoch for is shown below:
+
+\includegraphics[width=\imsize]{train-face-detector-problem/results/MyLinearSigmoid_test}]
 
 \subsection{Linear-Sigmoid-Linear Layer}
 
@@ -74,7 +91,13 @@ The second linear layer is calculated as $x_3=w_2^Tx_2+b_2$.
 \end{split}
 \end{equation}
 
-The plot of accuracy vs. no. of epoch is shown below:
+The plot of training accuracy vs. no. of epoch for is shown below:
+
+\includegraphics[width=\imsize]{train-face-detector-problem/results/MyLinearSigmoidLinear_train}]
+
+The plot of testing accuracy vs. no. of epoch for is shown below:
+
+\includegraphics[width=\imsize]{train-face-detector-problem/results/MyLinearSigmoidLinear_test}]
 
 \section{Gradient check}
 

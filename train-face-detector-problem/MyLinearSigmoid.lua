@@ -79,7 +79,7 @@ function MyLinearSigmoid:updateOutput(input)
    end
 
    -- calcualting a1 i.e the output of the sigmoid(z1)
-   self.a1 = my_sigmoid(self.z1)
+   self.a1 = sigmoid(self.z1)
 
    --
    self.output:resizeAs(self.a1):copy(self.a1)
@@ -167,7 +167,7 @@ function MyLinearSigmoid:__tostring__()
 end
 
 -- return the output of sigmoid input
-function my_sigmoid(input)
+function sigmoid(input)
 
    -- TODO ---------------------------------------------
 	return torch.pow(torch.add(torch.exp(-input),1),-1)

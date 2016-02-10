@@ -92,7 +92,7 @@ function MyLinearSigmoidLinear:updateOutput(input)
    end
 
    -- calcualting a1 i.e the output of the sigmoid(z1)
-   self.a1 = my_sigmoid(self.z1)
+   self.a1 = sigmoid(self.z1)
 
    -- Calcualting z2 i.e the output of the second Linear part of the layer
    if self.a1:dim() == 1 then
@@ -222,7 +222,7 @@ function MyLinearSigmoidLinear:__tostring__()
 end
 
 
-function my_sigmoid(input)
+function sigmoid(input)
 
    -- TODO ---------------------------------------------
 	return torch.pow(torch.add(torch.exp(-input),1),-1)

@@ -57,7 +57,7 @@ local test  = require 'test'
 ----------------------------------------------------------------------
 print(sys.COLORS.red .. '==> training!')
 
-while true do
+for i = 1,200 do
    train(data.trainData)
    test(data.testData)
 end
