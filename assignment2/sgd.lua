@@ -48,10 +48,7 @@ function sgd(opfunc, x, config, state)
    -- wd or wds = lambda
    if opt.optMethod == 'sgd_w' or opt.optMethod == 'sgd_wm' then
       -- TODO ---------------------------------------------
-
-
-
-
+		dfdx:add(wd,x)
       ----------------------------------------------------
    end
 
@@ -60,11 +57,12 @@ function sgd(opfunc, x, config, state)
    if opt.optMethod == 'sgd_wm' then
       if mom ~= 0 then
          -- TODO ---------------------------------------------
-
-
-
-
-
+		 if not config.previousUpdate then
+			config.previousUpdate = dfdx:clone()
+		 else
+			 config.previousUpdate:mul(mom):add(1-damp, dfdx)
+			 dfdx = config.previousUpdate
+		 end
          ----------------------------------------------------
       end
    end
@@ -75,14 +73,11 @@ function sgd(opfunc, x, config, state)
    -- (5) parameter update with single or individual learning rates
    if lrs then
       -- TODO ---------------------------------------------
-
-
-
-
+		x:add(-clr, lrs:cmul(dfdx))
       ----------------------------------------------------
    else
       -- TODO ---------------------------------------------
-
+	  x:add(-clr, dfdx)
       ----------------------------------------------------
    end
 

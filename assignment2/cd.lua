@@ -43,16 +43,17 @@ function cd(opfunc, x, run_passed, mean_dfdx, config, state)
    -- (3) select an index of the weight vect x
    -- (4) Make dfdx into zero except an element with the selcted index
    -- dfdx
-
-
+   local index = torch.random(1,dfdx:size()[1])
+   local indexVector = torch.zeros(dfdx:size()[1])
+   indexVector[index] = 1
+   dfdx:cmul(indexVector)
 
    ----------------------------------------------------
 
    -- (5) parameter update with single learning rates
    -- TODO ---------------------------------------------
    -- x
-
-
+   x:add(-clr, dfdx)
 
    ----------------------------------------------------
 

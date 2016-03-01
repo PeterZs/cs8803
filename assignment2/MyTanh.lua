@@ -8,7 +8,7 @@ function MyTanh:updateOutput(input)
 
   -- TODO ----------------------------------
   -- ...something here...
-
+  self.output:tanh()
   ------------------------------------------
 
   return self.output
@@ -20,7 +20,8 @@ function MyTanh:updateGradInput(input, gradOutput)
 
   -- TODO ----------------------------------
   -- ...something here...
-
+  local h = torch.tanh(input)
+  self.gradInput:cmul(h,h):mul(-1):add(1):cmul(gradOutput)
 
   ------------------------------------------
 

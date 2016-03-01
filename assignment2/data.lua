@@ -39,7 +39,6 @@ local train_dir = '.' -- se to current directory (move to where you like!)
 -- local tar = 'faces_cut_yuv_32x32.tar.gz'
 local tar = 'face-dataset.zip'
 
-
 --load from 'https://engineering.purdue.edu/elab/files/face-dataset.zip'
 if not paths.dirp('face-dataset') then
    --os.execute('mkdir -p ' .. train_dir)
@@ -62,6 +61,13 @@ local labelsAll = torch.Tensor(41267)
 
 -- classes: GLOBAL var!
 classes = {'face','backg'}
+
+if paths.filep('traindata.data') then
+	local result = torch.load('traindata.data')
+	trainData = result.trainData
+	testData = result.testData
+	return result
+end
 
 -- load backgrounds:
 for f=0,28033 do
@@ -222,11 +228,12 @@ if opt.visualize then
 end
 
 -- Exports
-return {
+result = {
    trainData = trainData,
    testData = testData,
    mean = mean,
    std = std,
    classes = classes
 }
-
+torch.save("traindata.data",result)
+return result

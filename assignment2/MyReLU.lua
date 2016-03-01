@@ -8,7 +8,7 @@ function MyReLU:updateOutput(input)
 
   -- TODO ----------------------------------
   -- ...something here...
-
+  self.output:cmul(torch.gt(self.output,0):typeAs(self.output))
   ------------------------------------------
 
   return self.output
@@ -19,7 +19,7 @@ function MyReLU:updateGradInput(input, gradOutput)
 
   -- TODO ----------------------------------
   -- ...something here...
-
+  self.gradInput:cmul(torch.gt(input,0):typeAs(self.output))
   ------------------------------------------
 
   return self.gradInput

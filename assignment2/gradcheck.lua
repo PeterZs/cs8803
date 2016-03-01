@@ -45,25 +45,25 @@ function create_model(opt)
   elseif opt.model == 'mlp_tanh' then
     model:add(nn.Linear(n_inputs, embedding_dim))
     -- TODO --------------------------------------------
-
+   model:add(nn.MyTanh())
     ----------------------------------------------------
     model:add(nn.Linear(embedding_dim,n_classes))
   elseif opt.model == 'mlp_sigmoid' then
     model:add(nn.Linear(n_inputs, embedding_dim))
     -- TODO --------------------------------------------
-
+   model:add(nn.MySigmoid())
     ----------------------------------------------------
     model:add(nn.Linear(embedding_dim,n_classes))
   elseif opt.model == 'mlp_relu' then
     model:add(nn.Linear(n_inputs, embedding_dim))
     -- TODO --------------------------------------------
-
+   model:add(nn.MyReLU())
     ----------------------------------------------------
     model:add(nn.Linear(embedding_dim,n_classes))
   elseif opt.model == 'mlp_requ' then
     model:add(nn.Linear(n_inputs, embedding_dim))
     -- TODO --------------------------------------------
-
+   model:add(nn.MyReQU())
     ----------------------------------------------------
     model:add(nn.Linear(embedding_dim,n_classes))
   end

@@ -127,7 +127,7 @@ elseif opt.model == 'mlp_tanh' then
    classifier:add(nn.Linear(nfeats*width*height, width))
    -- TODO --------------------------------------------
    -- add your tanh layer
-
+   classifier:add(nn.MyTanh())
    ----------------------------------------------------
    classifier:add(nn.Linear(width,2))
 
@@ -144,7 +144,7 @@ elseif opt.model == 'mlp_sigmoid' then
    classifier:add(nn.Linear(nfeats*width*height, width))
    -- TODO --------------------------------------------
    -- add your Sigmoid layer
-
+   classifier:add(nn.MySigmoid())
    ----------------------------------------------------
    classifier:add(nn.Linear(width,2))
 
@@ -161,7 +161,7 @@ elseif opt.model == 'mlp_relu' then
    classifier:add(nn.Linear(nfeats*width*height, width))
    -- TODO --------------------------------------------
    -- add your ReLU layer
-
+   classifier:add(nn.MyReLU())
    ----------------------------------------------------
    classifier:add(nn.Linear(width,2))
 
@@ -178,7 +178,7 @@ elseif opt.model == 'mlp_requ' then
    classifier:add(nn.Linear(nfeats*width*height, width))
    -- TODO --------------------------------------------
    -- add your ReQU layer
-
+   classifier:add(nn.MyReQU())
    ----------------------------------------------------
    classifier:add(nn.Linear(width,2))
 
