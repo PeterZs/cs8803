@@ -51,12 +51,12 @@ Weight decay = 1e-5
 \includegraphics[width=\imsize]{assignment2/results/sgdw_train}
 \includegraphics[width=\imsize]{assignment2/results/sgdw_test}
 
-Weight decay = 1e-3
+Weight decay = 1e0
 
 \includegraphics[width=\imsize]{assignment2/results/sgdw_w3_train}
 \includegraphics[width=\imsize]{assignment2/results/sgdw_w3_test}
 
-Weight decay = 1e-4
+Weight decay = 1e-1
 
 \includegraphics[width=\imsize]{assignment2/results/sgdw_w4_train}
 \includegraphics[width=\imsize]{assignment2/results/sgdw_w4_test}
@@ -101,7 +101,12 @@ The above tests were conducted over 100 epochs with different gradient descent m
 Each method differed in terms of convergence rate with respect to their parameters.
 For basic stochastic gradient descent, an increase in learning rate increases convergence rate
 but leads to more oscillation, whereas learning rate decay causes convergence to slow down
-for later iterations. 
+for later iterations.  For stochastic gradient descent with weight decay, the regularization term
+allows the optimization to generalize better to test data but oscillation may occur if
+the regularization term is set too high. For stochastic gradient descent with momentum, the momentum
+term reduces the effect of jumps or oscillations and increases the convergence rate.
+For coordinate descent, the convergence rate is slower than that of stochastic gradient descent.
+The effect of learning rate is similiar in that a higher learning rate leads to higher convergence rate.
 
 \section{Activation}
 The plots of training and test error for each method is shown below:
@@ -120,6 +125,19 @@ The plots of training and test error for each method is shown below:
 \includegraphics[width=\imsize]{assignment2/results/requ_test}
 
 \subsection{Comparison}
+
+The activation functions are plotted below. The graphical comparison shows that tanh is similiar in shape with sigmoid
+but with a range between -1 and 1. On the other hand, ReLU and ReQU are similiar in that negative values are set to zero
+but ReQU uses a quadratic instead of linear function for positive values.
+
+\includegraphics[width=\imsize]{assignment2/MyTanh}
+
+\includegraphics[width=\imsize]{assignment2/MySigmoid}
+
+\includegraphics[width=\imsize]{assignment2/MyReLU}
+
+\includegraphics[width=\imsize]{assignment2/MyReQU}
+
 
 From the plots of training and test error, tanh showed fast convergence rate whereas sigmoid demonstrated
 slow convergence at earlier iterations. The Rectified Linear and Quadratic Unit also showed slightly faster

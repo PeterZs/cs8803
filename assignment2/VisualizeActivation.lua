@@ -1,8 +1,10 @@
 require 'torch'
-require 'MyReLU.lua'
-require 'MyReQU.lua'
-require 'MySigmoid.lua'
-require 'MyTanh.lua'
+require 'pl'
+require 'trepl'
+require 'MyReLU'
+require 'MyReQU'
+require 'MySigmoid'
+require 'MyTanh'
 require 'nn'
 require 'gnuplot'
 
@@ -21,16 +23,16 @@ X = torch.linspace(-10,10,100)
 -- Generate ouput using the layer implemented
 if opt.model == 'MySigmoid' then
     -- TODO
-    --Y = 
+    Y =  nn.MySigmoid():updateOutput(X)
 elseif opt.model == 'MyTanh' then
     -- TODO
-    --Y = 
+    Y =  nn.MyTanh():updateOutput(X)
 elseif opt.model == 'MyReLU' then
     --TODO
-    --Y = 
+    Y =  nn.MyReLU():updateOutput(X)
 elseif opt.model == 'MyReQU' then
     --TODO
-    --Y = 
+    Y =  nn.MyReQU():updateOutput(X)
 end
 
 
