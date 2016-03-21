@@ -123,6 +123,16 @@ local function data_augmentation(inputs)
     if opt.dataAugment == 'true' then
         -- TODO---
         -- DATA augmentation, mirroring and cropping
+		local x = torch.rand(1):mul(256-width):floor()
+		local y = torch.rand(1):mul(256-width):floor()
+		local outputs = image.crop(inputs,x,y,x+width,y+height)
+		if torch.rand() > 0.5 then
+			outputs = image.hflip(outputs)
+		end
+		if torch.rand() > 0.5 then
+			outputs = image.vflip(outputs)
+		end
+		return outputs
     else
         local outputs = image.crop(inputs,"c",height,width)
         return outputs

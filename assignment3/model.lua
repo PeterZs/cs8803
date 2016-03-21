@@ -56,6 +56,28 @@ if opt.model == 'CNN' then
    --Use ReLU as yoru activations
    local CNN = nn.Sequential()
    CNN:add(nn.SpatialConvolutionMM(nfeats, nstates[1], filtsize[1], filtsize[1]))
+   CNN:add(nn.ReLU())
+   CNN:add(nn.SpatialMaxPooling(poolsize[1],poolsize[1],poolsize[1],poolsize[1]))
+   CNN:add(nn.SpatialConvolutionMM(nstates[1], nstates[2], filtsize[2], filtsize[2]))
+   CNN:add(nn.ReLU())
+   CNN:add(nn.SpatialMaxPooling(poolsize[2],poolsize[2],poolsize[2],poolsize[2]))
+   local w = ((width-filtsize[1]+1)/poolsize[1]-filtsize[2]+1)/poolsize[2]
+   local h = ((height-filtsize[1]+1)/poolsize[1]-filtsize[2]+1)/poolsize[2]
+   local conv_size = nstates[2] * math.floor(w) * math.floor(h)
+   CNN:add(nn.Reshape(conv_size))
+   CNN:add(nn.Linear(conv_size, nstates[3]))
+   CNN:add(nn.ReLU())
+   CNN:add(nn.Linear(nstates[3], noutputs))
+   classifier:add(nn.LogSoftMax())
+   model:add(CNN)
+   model:add(classifier)
+   model_name = "CNN.net"
+elseif opt.model == 'CNN_TANH' then
+   print(sys.COLORS.red ..  '==> construct CNN_TANH')
+   ---- TODO --------
+   --same as above, replace ReLU with Tanh
+   local CNN = nn.Sequential()
+   CNN:add(nn.SpatialConvolutionMM(nfeats, nstates[1], filtsize[1], filtsize[1]))
    CNN:add(nn.Tanh())
    CNN:add(nn.SpatialMaxPooling(poolsize[1],poolsize[1],poolsize[1],poolsize[1]))
    CNN:add(nn.SpatialConvolutionMM(nstates[1], nstates[2], filtsize[2], filtsize[2]))
@@ -71,16 +93,29 @@ if opt.model == 'CNN' then
    classifier:add(nn.LogSoftMax())
    model:add(CNN)
    model:add(classifier)
-   model_name = "CNN.net"
-elseif opt.model == 'CNN_TANH' then
-   print(sys.COLORS.red ..  '==> construct CNN_TANH')
-   ---- TODO --------
-   --same as above, replace ReLU with Tanh
    model_name = "CNN_TANH.net"
 elseif opt.model == 'CNN_DROPOUT' then
    print(sys.COLORS.red ..  '==> construct CNN_DROPOUT')
    ---- TODO --------
    -- Same as CNN but with a Dropout layer
+   local CNN = nn.Sequential()
+   CNN:add(nn.SpatialConvolutionMM(nfeats, nstates[1], filtsize[1], filtsize[1]))
+   CNN:add(nn.ReLU())
+   CNN:add(nn.SpatialMaxPooling(poolsize[1],poolsize[1],poolsize[1],poolsize[1]))
+   CNN:add(nn.SpatialConvolutionMM(nstates[1], nstates[2], filtsize[2], filtsize[2]))
+   CNN:add(nn.ReLU())
+   CNN:add(nn.SpatialMaxPooling(poolsize[2],poolsize[2],poolsize[2],poolsize[2]))
+   local w = ((width-filtsize[1]+1)/poolsize[1]-filtsize[2]+1)/poolsize[2]
+   local h = ((height-filtsize[1]+1)/poolsize[1]-filtsize[2]+1)/poolsize[2]
+   local conv_size = nstates[2] * math.floor(w) * math.floor(h)
+   CNN:add(nn.Reshape(conv_size))
+   CNN:add(nn.Dropout())
+   CNN:add(nn.Linear(conv_size, nstates[3]))
+   CNN:add(nn.ReLU())
+   CNN:add(nn.Linear(nstates[3], noutputs))
+   classifier:add(nn.LogSoftMax())
+   model:add(CNN)
+   model:add(classifier)
    model_name = "CNN_DROPOUT.net"
 elseif opt.model == 'CNN_FINETUNE' then
    require 'loadcaffe'
