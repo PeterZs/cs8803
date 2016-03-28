@@ -94,13 +94,20 @@ if opt.model == "CNN_FINETUNE" then
     -- The below code assigns learning rate which are 1/10th of the
     -- base learning rate for all the layers except the last one.
     -- You may modify this and freeze all the layers except the last
-    optimState1 = {}
+    --[[optimState1 = {}
     for i=1,#model.modules do
         optimState1[i] = deepCopy(optimState)
         if i ~= #model.modules then 
             optimState1[i].learningRate = optimState.learningRate/10
         end
-    end
+    end--]]
+		  for i, m in ipairs(model.modules) do
+				if torch.type(m):find('Convolution') then
+				  m.accGradParameters = function() end
+					m.updateParameters = function() end
+				 end
+		 end
+
 end
 
 local height = 224
@@ -123,13 +130,13 @@ local function data_augmentation(inputs)
     if opt.dataAugment == 'true' then
         -- TODO---
         -- DATA augmentation, mirroring and cropping
-		local x = torch.rand(1):mul(256-width):floor()
-		local y = torch.rand(1):mul(256-width):floor()
+		local x = torch.rand(1):mul(256-width):floor()[1]
+		local y = torch.rand(1):mul(256-height):floor()[1]
 		local outputs = image.crop(inputs,x,y,x+width,y+height)
-		if torch.rand() > 0.5 then
+		if torch.rand(1)[1] > 0.5 then
 			outputs = image.hflip(outputs)
 		end
-		if torch.rand() > 0.5 then
+		if torch.rand(1)[1] > 0.5 then
 			outputs = image.vflip(outputs)
 		end
 		return outputs
@@ -176,6 +183,34 @@ local function train(trainData)
           --TODO ----
           --Write the code necessary to fine tune the 
           --model.
+         local eval_E = function(w)
+            -- reset gradients
+            dE_dw:zero()
+
+            -- evaluate function for complete mini batch
+            local y = model:forward(x)
+            local E = loss:forward(y,yt)
+
+            -- estimate df/dW
+            local dE_dy = loss:backward(y,yt)   
+            model:backward(x,dE_dy)
+
+            -- update confusion
+            for i = 1,opt.batchSize do
+               confusion:add(y[i],yt[i])
+            end
+
+            -- return f and df/dX
+            return E,dE_dw
+         end
+
+         -- optimize on current mini-batch
+         if opt.optMethod == 'sgd' then
+            optim.sgd(eval_E, w, optimState)
+         elseif opt.optMethod == 'asgd' then
+            run_passed = run_passed + 1
+            mean_dfdx  = asgd(eval_E, w, run_passed, mean_dfdx, optimState)
+         end                                
       else
          -- create closure to evaluate f(X) and df/dX
          local eval_E = function(w)
@@ -225,12 +260,14 @@ local function train(trainData)
    end
 
    -- save/log current net
-   --local filename = paths.concat(opt.save, model_name)
-   --os.execute('mkdir -p ' .. sys.dirname(filename))
-   --print('==> saving model to '..filename)
-   --model1 = model:clone()
-   --netLighter(model1)
-   --torch.save(filename, model1)
+  if not opt.model == "CNN_FINETUNE" then
+	   local filename = paths.concat(opt.save, model_name)
+	   os.execute('mkdir -p ' .. sys.dirname(filename))
+	   print('==> saving model to '..filename)
+	   model1 = model:clone()
+	   netLighter(model1)
+	   torch.save(filename, model1)
+   end
 
    -- next epoch
    confusion:zero()

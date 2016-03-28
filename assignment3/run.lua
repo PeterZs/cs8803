@@ -58,7 +58,11 @@ local test  = require 'test'
 ------------------------------------------------------------------------
 print(sys.COLORS.red .. '==> training!')
 --
-while true do
+local n_epochs = 50
+if opt.model == 'CNN_FINETUNE' then
+	n_epochs = 3
+end
+for i=1,n_epochs do
    train(data.trainData)
    test(data.testData)
 end

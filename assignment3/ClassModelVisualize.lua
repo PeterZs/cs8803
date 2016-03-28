@@ -38,7 +38,7 @@ local img_mean = torch.load('ilsvrc_2012_mean.t7').img_mean:transpose(3,1):float
 
 img_mean = image.scale(img_mean,H,W)
 local zero_image = torch.zeros(channel,H,W)
-model:add(nn.ImageLayer(zero_image))
+--model:add(nn.ImageLayer(zero_image))
 model:add(vgg_net_nosoftmax)
 print(model)
 
@@ -60,11 +60,11 @@ target[1] = t
 --model.modules[1]:reset(zero_image:clone())
 print('Generating class model image of class ' .. t)
 current_image = zero_image
---win_w1 = image.display{
---   image=current_image, zoom=1, nrow=1,
---   min=-1, max=1,
---   win=win_w1, legend='Initial Image', padding=1
---}
+win_w1 = image.display{
+   image=current_image, zoom=1, nrow=1,
+   min=-1, max=1,
+   win=win_w1, legend='Initial Image', padding=1
+}
 iter = 25
 for e = 1,iter do
     xlua.progress(e, iter)
@@ -73,11 +73,11 @@ for e = 1,iter do
 
     
     
-    -- win_w2 = image.display{
-    --    image=current_image, zoom=1, nrow=1,
-    --    min=-1, max=1,
-    --    win=win_w2, legend='Image after iter '..e, padding=1
-    -- }
+     win_w2 = image.display{
+        image=current_image, zoom=1, nrow=1,
+        min=-1, max=1,
+        win=win_w2, legend='Image after iter '..e, padding=1
+     }
 end
 
 -- Adding the mean image ---

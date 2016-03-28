@@ -125,7 +125,10 @@ elseif opt.model == 'CNN_FINETUNE' then
    -- Remove the the last two layer and replace with linear layer to matcb
    -- your requirement followed by a  softmax layer
    --
-   
+   model:remove() 
+   model:remove()
+   model:add(nn.Linear(4096,noutputs))
+   model:add(nn.LogSoftMax())
    model_name = "CNN_FINETUNE.net"
 end
 -- Loss: NLL

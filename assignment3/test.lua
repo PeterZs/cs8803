@@ -22,7 +22,7 @@ local loss = t.loss
 local confusion = optim.ConfusionMatrix(classes) -- faces: yes, no
 
 -- Logger:
-local testLogger = optim.Logger(paths.concat(opt.save, 'test.log'))
+--local testLogger = optim.Logger(paths.concat(opt.save, 'test.log'))
 
 local height = 224
 local width = 224
@@ -80,6 +80,7 @@ function test(testData)
    print(confusion)
 
    -- update log/plot
+   local testLogger = optim.Logger(paths.concat(opt.save, 'test.log'))
    testLogger:add{['% mean class accuracy (test set)'] = confusion.totalValid * 100}
    if opt.plot then
       testLogger:style{['% mean class accuracy (test set)'] = '-'}
