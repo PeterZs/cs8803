@@ -70,8 +70,11 @@ for e = 1,iter do
     xlua.progress(e, iter)
     -- TODO ---
     -- Optimize the image to maximize the score for target.
-
-    
+	local y = model:forward(current_image)
+	local E = loss:forward(y,target)
+	local dE_dy = loss:backward(y,target)
+	model:backward(current_image,dE_dy)
+	current_image:add(model.modules[1].gradInput)
     
      win_w2 = image.display{
         image=current_image, zoom=1, nrow=1,

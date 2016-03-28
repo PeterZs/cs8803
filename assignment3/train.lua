@@ -102,7 +102,7 @@ if opt.model == "CNN_FINETUNE" then
         end
     end--]]
 		  for i, m in ipairs(model.modules) do
-				if torch.type(m):find('Convolution') then
+				if not (i == #model.modules-1) then
 				  m.accGradParameters = function() end
 					m.updateParameters = function() end
 				 end
@@ -260,7 +260,7 @@ local function train(trainData)
    end
 
    -- save/log current net
-  if not opt.model == "CNN_FINETUNE" then
+  if not (opt.model == "CNN_FINETUNE") then
 	   local filename = paths.concat(opt.save, model_name)
 	   os.execute('mkdir -p ' .. sys.dirname(filename))
 	   print('==> saving model to '..filename)
