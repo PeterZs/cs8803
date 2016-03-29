@@ -74,7 +74,8 @@ for e = 1,iter do
 	local E = loss:forward(y,target)
 	local dE_dy = loss:backward(y,target)
 	model:backward(current_image,dE_dy)
-	current_image:add(model.modules[1].gradInput)
+	W = model.modules[1].gradInput * 1000
+	current_image:add(W)
     
      win_w2 = image.display{
         image=current_image, zoom=1, nrow=1,
